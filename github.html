@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GitHub User Finder</title>
+    <link rel="icon" href="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+}
+
+button[type="submit"] {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#result-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+    </style>
+</head>
+<body>
+    <h1>GitHub User Finder</h1>
+    <form id="search-form">
+        <input type="text" id="username-input" placeholder="Enter GitHub username">
+        <button type="submit">Search</button>
+    </form>
+    <div id="result-container"></div>
+    <script >
+        const searchForm = document.getElementById('search-form');
+const usernameInput = document.getElementById('username-input');
+const resultContainer = document.getElementById('result-container');
+
+searchForm.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const username = usernameInput.value;
+    if (username) {
+        fetch(`https://api.github.com/users/${username}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'Not Found') {
+                    resultContainer.innerHTML = '<p>User not found</p>';
+                } else {
+                    resultContainer.innerHTML = `
+                        <h2>${data.name}</h2>
+                        <img src="${data.avatar_url}" alt="Profile picture" width="150px">
+                        <p>Followers: ${data.followers}</p>
+                        <p>Following: ${data.following}</p>
+                        <p>Public Repositories: ${data.public_repos}</p>
+                    `;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultContainer.innerHTML = '<p>An error occurred</p>';
+            });
+    }
+});
+
+    </script>
+</body>
+</html>
